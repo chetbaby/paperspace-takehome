@@ -27,7 +27,9 @@ export default function TemporaryDrawer() {
   useEffect(() => {
     axios.get('/updates').then(response => {
       const mdUpdates = response.data.files['updates.md'].content;
-      const newNotifications = Array.from(response.data.history).length;
+      const newNotifications =
+        Array.from(response.data.history).length -
+        localStorage.getItem('viewedNotifications');
       setList(mdUpdates);
       setNotifications(newNotifications);
     });
@@ -40,7 +42,7 @@ export default function TemporaryDrawer() {
     ) {
       return;
     }
-
+    localStorage.setItem('viewedNotifications', notifications);
     setState({ ...state, [side]: open });
   };
 
@@ -58,7 +60,10 @@ export default function TemporaryDrawer() {
 
   return (
     <div>
-      <IconButton aria-label="show 17 new notifications" color="inherit">
+      <IconButton
+        aria-label={`show ${notifications} new notifications`}
+        color="inherit"
+      >
         <Badge badgeContent={notifications} color="secondary">
           <NotificationsIcon onClick={toggleDrawer('right', true)} />
         </Badge>
