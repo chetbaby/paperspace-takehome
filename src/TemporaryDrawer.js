@@ -15,6 +15,18 @@ const useStyles = makeStyles({
   fullList: {
     width: 'auto',
   },
+  drawer: {
+    margin: '2em',
+    color: '#47525d',
+    fontFamily: '"Roboto", "Helvetica Neue"',
+    '& img': {
+      display: 'inline-block',
+      width: '100%',
+    },
+    '& h1, h2': {
+      color: '#47525d',
+    },
+  },
 });
 
 export default function TemporaryDrawer() {
@@ -60,7 +72,7 @@ export default function TemporaryDrawer() {
     >
       <ReactMarkdown
         source={list}
-        className="updates-drawer"
+        className={classes.drawer}
         escapeHtml={false}
       />
       <Divider />
