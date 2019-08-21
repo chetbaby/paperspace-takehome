@@ -9,7 +9,6 @@ app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// sample API
 app.get('/updates', getGist, (req, res, next) => res.send(res.locals.data));
 
 app.listen(8000, () => console.log(`Listening on port 8000!`));
