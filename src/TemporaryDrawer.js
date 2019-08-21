@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Divider from '@material-ui/core/Divider';
 import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import axios from 'axios';
 
 const useStyles = makeStyles({
   list: {
@@ -17,9 +19,19 @@ const useStyles = makeStyles({
 
 export default function TemporaryDrawer() {
   const classes = useStyles();
+  const [list, setList] = useState(null);
+  const [notifications, setNotifications] = useState(0);
   const [state, setState] = useState({
     right: false,
   });
+  useEffect(() => {
+    axios.get('/updates').then(response => {
+      const mdUpdates = response.data.files['updates.md'].content;
+      const newNotifications = Array.from(response.data.history).length;
+      setList(mdUpdates);
+      setNotifications(newNotifications);
+    });
+  }, []);
 
   const toggleDrawer = (side, open) => event => {
     if (
@@ -28,6 +40,7 @@ export default function TemporaryDrawer() {
     ) {
       return;
     }
+
     setState({ ...state, [side]: open });
   };
 
@@ -38,6 +51,7 @@ export default function TemporaryDrawer() {
       onClick={toggleDrawer(side, false)}
       onKeyDown={toggleDrawer(side, false)}
     >
+      <ReactMarkdown source={list} escapeHtml={false} />
       <Divider />
     </div>
   );
@@ -45,13 +59,10 @@ export default function TemporaryDrawer() {
   return (
     <div>
       <IconButton aria-label="show 17 new notifications" color="inherit">
-        <Badge badgeContent={17} color="secondary">
+        <Badge badgeContent={notifications} color="secondary">
           <NotificationsIcon onClick={toggleDrawer('right', true)} />
         </Badge>
       </IconButton>
-      {/* <Badge color="secondary" variant="dot">
-        <Button onClick={toggleDrawer('right', true)}>Notifications</Button>
-      </Badge> */}
       <Drawer
         anchor="right"
         open={state.right}
