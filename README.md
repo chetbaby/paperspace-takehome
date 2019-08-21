@@ -6,6 +6,14 @@ My application is built with MaterialUI components, while using `react-markdown`
 
 **NOTE: If you'd like to switch the markdown file, just change the source URL located in the `APIController` assigned to `UPDATE_GIST`.**
 
+```
+APIController.js
+=================
+
+const UPDATE_GIST =
+  'https://api.github.com/gists/{gistID}';
+```
+
 ## Installation
 `npm i` to start installing required packages—note that I have `eslint` and `prettier` installed for linting/formatting. The `dev` script to run the app in development mode.
 
