@@ -39,12 +39,14 @@ export default function TemporaryDrawer() {
   const [state, setState] = useState({
     right: false,
   });
+
+  // fetches onComponentMount
   useEffect(() => {
     axios.get('/updates').then(response => {
       const mdUpdates = response.data.files['updates.md'].content;
       setList(mdUpdates);
       setTotalNotifications(Array.from(response.data.history).length);
-
+      // calculates notifications to show
       const newNotifications =
         totalNotifications - localStorage.getItem('viewedNotifications');
       setDisplayNotifications(newNotifications);
@@ -58,6 +60,7 @@ export default function TemporaryDrawer() {
     ) {
       return;
     }
+    // reset notifications to 0 when drawer pulled out
     localStorage.setItem('viewedNotifications', totalNotifications);
     setDisplayNotifications(0);
     setState({ ...state, [side]: open });
