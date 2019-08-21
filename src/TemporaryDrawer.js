@@ -20,20 +20,24 @@ const useStyles = makeStyles({
 export default function TemporaryDrawer() {
   const classes = useStyles();
   const [list, setList] = useState(null);
-  const [notifications, setNotifications] = useState(0);
+  const [displayNotifications, setDisplayNotifications] = useState(0);
+  const [totalNotifications, setTotalNotifications] = useState(
+    localStorage.getItem('viewedNotifications')
+  );
   const [state, setState] = useState({
     right: false,
   });
   useEffect(() => {
     axios.get('/updates').then(response => {
       const mdUpdates = response.data.files['updates.md'].content;
-      const newNotifications =
-        Array.from(response.data.history).length -
-        localStorage.getItem('viewedNotifications');
       setList(mdUpdates);
-      setNotifications(newNotifications);
+      setTotalNotifications(Array.from(response.data.history).length);
+
+      const newNotifications =
+        totalNotifications - localStorage.getItem('viewedNotifications');
+      setDisplayNotifications(newNotifications);
     });
-  }, []);
+  }, [totalNotifications]);
 
   const toggleDrawer = (side, open) => event => {
     if (
@@ -42,7 +46,8 @@ export default function TemporaryDrawer() {
     ) {
       return;
     }
-    localStorage.setItem('viewedNotifications', notifications);
+    localStorage.setItem('viewedNotifications', totalNotifications);
+    setDisplayNotifications(0);
     setState({ ...state, [side]: open });
   };
 
@@ -53,7 +58,11 @@ export default function TemporaryDrawer() {
       onClick={toggleDrawer(side, false)}
       onKeyDown={toggleDrawer(side, false)}
     >
-      <ReactMarkdown source={list} escapeHtml={false} />
+      <ReactMarkdown
+        source={list}
+        className="updates-drawer"
+        escapeHtml={false}
+      />
       <Divider />
     </div>
   );
@@ -61,10 +70,10 @@ export default function TemporaryDrawer() {
   return (
     <div>
       <IconButton
-        aria-label={`show ${notifications} new notifications`}
+        aria-label={`show ${displayNotifications} new notifications`}
         color="inherit"
       >
-        <Badge badgeContent={notifications} color="secondary">
+        <Badge badgeContent={displayNotifications} color="secondary">
           <NotificationsIcon onClick={toggleDrawer('right', true)} />
         </Badge>
       </IconButton>
